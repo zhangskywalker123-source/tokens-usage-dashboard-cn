@@ -1,5 +1,7 @@
 import importlib.util
 import json
+import shutil
+import subprocess
 import tempfile
 import unittest
 import zipfile
@@ -38,6 +40,29 @@ class NativeDashboardTests(unittest.TestCase):
     def test_native_spec_places_runtime_archive_at_meipass_root(self):
         spec = (ROOT / 'exe-build' / 'TokenDashGUI.spec').read_text(encoding='utf-8')
         self.assertIn("datas=[('bundle/runtime.zip', '.')],", spec)
+
+    def test_installer_script_places_program_in_named_folder_and_creates_shortcut(self):
+        powershell = shutil.which('powershell.exe')
+        if not powershell:
+            self.skipTest('Windows PowerShell is unavailable')
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            payload = root / 'payload'
+            parent = root / 'install-root'
+            desktop = root / 'desktop'
+            payload.mkdir()
+            parent.mkdir()
+            (payload / 'app.exe').write_bytes(b'test executable')
+            shutil.copy2(ROOT / 'exe-build' / 'installer.ps1', payload / 'install.ps1')
+            result = subprocess.run([
+                powershell, '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File',
+                str(payload / 'install.ps1'), '-ParentPath', str(parent), '-DesktopPath', str(desktop), '-NoLaunch',
+            ], capture_output=True, text=True, encoding='utf-8', errors='replace', timeout=30)
+
+            self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+            installed = parent / 'Tokens用量统计中文看板'
+            self.assertEqual((installed / 'Tokens用量统计中文看板.exe').read_bytes(), b'test executable')
+            self.assertTrue((desktop / 'Tokens用量统计中文看板.lnk').is_file())
 
     def test_model_vendor_classification_covers_major_families_without_guessing_local_execution(self):
         cases = {

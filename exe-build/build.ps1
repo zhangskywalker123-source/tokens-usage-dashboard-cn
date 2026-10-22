@@ -73,6 +73,76 @@ try {
     if (-not ($archiveEntries | Where-Object { $_.Trim() -eq 'runtime.zip' })) {
         throw 'Native EXE verification failed: runtime.zip is not at the embedded extraction root.'
     }
+
+    Write-Host 'Building standalone installer ...'
+    $iexpress = Join-Path (Join-Path $env:WINDIR 'System32') 'iexpress.exe'
+    if (-not (Test-Path -LiteralPath $iexpress)) { throw 'Windows IExpress was not found.' }
+    $installerStage = Join-Path $PSScriptRoot 'installer-stage'
+    New-Item -ItemType Directory -Path $installerStage -Force | Out-Null
+    Copy-Item -LiteralPath $nativeExe -Destination (Join-Path $installerStage 'app.exe') -Force
+    Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'installer.ps1') -Destination (Join-Path $installerStage 'install.ps1') -Force
+
+    $setupExe = Join-Path (Join-Path $PSScriptRoot 'dist') 'Tokens用量看板安装程序.exe'
+    $sedTarget = Join-Path $installerStage 'setup.exe'
+    $sedPath = Join-Path $installerStage 'setup.sed'
+    $sed = @"
+[Version]
+Class=IEXPRESS
+SEDVersion=3
+[Options]
+PackagePurpose=InstallApp
+ShowInstallProgramWindow=1
+HideExtractAnimation=1
+UseLongFileName=1
+InsideCompressed=1
+CAB_FixedSize=0
+CAB_ResvCodeSigning=0
+RebootMode=N
+InstallPrompt=
+DisplayLicense=
+FinishMessage=
+TargetName=%TargetName%
+FriendlyName=%FriendlyName%
+AppLaunched=%AppLaunched%
+PostInstallCmd=<None>
+AdminQuietInstCmd=
+UserQuietInstCmd=
+SourceFiles=SourceFiles
+[Strings]
+TargetName=$sedTarget
+FriendlyName=Tokens Usage Dashboard Setup
+AppLaunched=powershell.exe -NoProfile -ExecutionPolicy Bypass -File install.ps1
+SourceDir=$installerStage
+FILE0=install.ps1
+FILE1=app.exe
+[SourceFiles]
+SourceFiles0=%SourceDir%
+[SourceFiles0]
+%FILE0%=
+%FILE1%=
+"@
+    [System.IO.File]::WriteAllText($sedPath, $sed, [System.Text.Encoding]::ASCII)
+    if (Test-Path -LiteralPath $sedTarget) { Remove-Item -LiteralPath $sedTarget -Force }
+    & $iexpress /N /Q $sedPath
+    if ($LASTEXITCODE -ne 0) { throw "IExpress installer build failed with exit code $LASTEXITCODE" }
+    $deadline = [DateTime]::UtcNow.AddMinutes(10)
+    $previousLength = 0
+    $stableChecks = 0
+    while ($stableChecks -lt 3 -and [DateTime]::UtcNow -lt $deadline) {
+        if (Test-Path -LiteralPath $sedTarget -PathType Leaf) {
+            $currentLength = (Get-Item -LiteralPath $sedTarget).Length
+            if ($currentLength -gt 0 -and $currentLength -eq $previousLength) {
+                $stableChecks++
+            } else {
+                $stableChecks = 0
+            }
+            $previousLength = $currentLength
+        }
+        if ($stableChecks -lt 3) { Start-Sleep -Seconds 2 }
+    }
+    if ($stableChecks -lt 3) { throw 'IExpress did not finish creating a stable setup executable within 10 minutes.' }
+    Copy-Item -LiteralPath $sedTarget -Destination $setupExe -Force
+    Write-Host "Installer created: $setupExe"
 } finally {
     Pop-Location
 }

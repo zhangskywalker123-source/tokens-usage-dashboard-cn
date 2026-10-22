@@ -46,7 +46,9 @@ python -m unittest discover -s tests -p 'test_*.py' -v
 
 ## 隐私与发布
 
-构建出的 EXE 已内置 Python/Tk、Node.js 和 CodeBurn 运行时；目标电脑无需预装 Python、Node.js 或 npm。首次启动会将 Node/CodeBurn 解压到 EXE 旁的 _runtime 目录，因此请将 EXE 放在当前用户可写入的文件夹中。
+构建时同时生成 Tokens用量看板安装程序.exe。运行后选择安装父目录，程序会创建“Tokens用量统计中文看板”子文件夹，将主 EXE 放入其中并创建桌面快捷方式。首次释放的运行时及本地数据也保留在该文件夹。安装器使用 Windows 自带的 IExpress 和 PowerShell，不需要额外安装打包工具。
+
+构建出的 EXE 已内置 Python/Tk、Node.js 和 CodeBurn 运行时；目标电脑无需预装 Python、Node.js 或 npm。首次启动会将 Node/CodeBurn 解压到主程序旁的 _runtime 目录。安装目录需允许当前用户写入。
 
 `usage.json`、生成的 `看板.html`、EXE、运行时依赖和预览图均被 `.gitignore` 排除。它们可能包含个人用量、模型名称、项目路径或会话信息，不应提交到公共仓库。运行看板时，统计文件保留在本机；本地 HTTP 服务只提供看板页面，并仅接受同源刷新请求。
 

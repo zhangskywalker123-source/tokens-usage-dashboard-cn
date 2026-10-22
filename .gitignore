@@ -10,6 +10,7 @@ exe-build/bundle/runtime/
 exe-build/bundle/runtime.zip
 exe-build/build/
 exe-build/dist/
+exe-build/installer-stage/
 exe-build/test/
 exe-build/test2/
 

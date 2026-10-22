@@ -46,7 +46,9 @@ Build artifacts go to `exe-build/dist/` and are excluded from Git. Running `刷�
 
 ## Privacy and licensing
 
-The built executables bundle Python/Tk, Node.js, and CodeBurn; target PCs do not need Python, Node.js, or npm installed. On first launch, the native app extracts Node/CodeBurn to an _runtime folder beside the executable, so keep it in a directory writable by the current user.
+The build also creates Tokens用量看板安装程序.exe. Choose a parent directory in the installer; it creates a Tokens用量统计中文看板 subfolder, places the main executable there, and creates a desktop shortcut. The extracted runtime and local data also stay in that folder. The installer uses Windows IExpress and PowerShell, with no extra installer compiler required.
+
+The built executables bundle Python/Tk, Node.js, and CodeBurn; target PCs do not need Python, Node.js, or npm installed. On first launch, the native app extracts Node/CodeBurn to an _runtime folder beside the main executable. The installation directory must be writable by the current user.
 
 `usage.json`, the generated dashboard, executables, runtime dependencies, and preview images are excluded by `.gitignore`. They may reveal usage data, model names, project paths, or session information and must not be committed to a public repository. Runtime statistics remain on the local machine. The local HTTP server serves only the dashboard and accepts same-origin refresh requests.
 
