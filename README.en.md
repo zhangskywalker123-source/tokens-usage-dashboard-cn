@@ -13,7 +13,9 @@ This project reads local AI-client usage logs through CodeBurn and adds a parser
 - Project, tool, client, and provider rankings sorted by their displayed metric.
 - Chart.js is embedded in the generated HTML for offline viewing.
 - Two Windows frontends are available: a browser dashboard served only on `127.0.0.1`, and an optional native Tkinter window that starts no HTTP server.
+- The native window refreshes CodeBurn before first display. HTML snapshots older than 60 minutes show a freshness warning to avoid mistaking stale totals for today's data.
 - The native window can optionally write startup diagnostics when `TOKEN_DASH_DEBUG_FILE` is set; no diagnostic file is written by default.
+- The native window refreshes CodeBurn before its first render; the HTML dashboard warns when its CodeBurn snapshot is older than 60 minutes.
 
 ## Development and tests
 

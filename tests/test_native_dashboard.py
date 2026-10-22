@@ -3,6 +3,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 
@@ -14,6 +15,46 @@ SPEC.loader.exec_module(native)
 
 
 class NativeDashboardTests(unittest.TestCase):
+    def test_native_startup_refreshes_codeburn_before_loading_snapshot(self):
+        events = []
+
+        def prepare_runtime(exe_dir, meipass, log, prog_cb=None):
+            events.append("runtime")
+            return "runtime-dir"
+
+        def refresh(exe_dir, runtime_dir, log):
+            events.append("collect")
+            self.assertEqual(runtime_dir, "runtime-dir")
+            return True, ""
+
+        with patch.object(native, "ensure_runtime", side_effect=prepare_runtime), \
+                patch.object(native, "collect", side_effect=refresh):
+            result = native.prepare_initial_snapshot("app-dir", "bundle-dir", lambda _: None)
+
+        self.assertEqual(events, ["runtime", "collect"])
+        self.assertEqual(result, ("runtime-dir", True, ""))
+
+    def test_native_collect_passes_a_nonexistent_output_path_to_codeburn(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "usage.json").write_text('{"records": ["old"]}', encoding="utf-8")
+            (root / "看板.html").write_text("old html", encoding="utf-8")
+
+            def fake_run(args, cwd, **kwargs):
+                if str(args[1]).endswith("cli.js"):
+                    output = Path(args[-1])
+                    self.assertFalse(output.exists(), "CodeBurn refuses to overwrite the mkstemp placeholder")
+                    output.write_text(json.dumps({"records": []}), encoding="utf-8")
+                else:
+                    Path(cwd, "看板.html").write_text("fresh html", encoding="utf-8")
+                return SimpleNamespace(returncode=0, stdout=b"")
+
+            with patch.object(native.subprocess, "run", side_effect=fake_run):
+                self.assertEqual(native.collect(str(root), str(root / "_runtime"), lambda _: None), (True, ""))
+
+            self.assertEqual((root / "usage.json").read_text(encoding="utf-8"), '{"records": []}')
+            self.assertEqual((root / "看板.html").read_text(encoding="utf-8"), "old html")
+
     def test_time_normalization_and_aggregate_ties_are_deterministic(self):
         ts = native.parse_ts_ms("2026-10-22 09:30:00")
         self.assertEqual(native.bj_day(ts), "2026-10-22")

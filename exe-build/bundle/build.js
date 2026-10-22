@@ -459,6 +459,12 @@ const toolRows = hbarList(data.tools || [], t => t['Tool'], t => t['Calls'], v =
 
 // ---------- html ----------
 const generated = new Date(data.generated).toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false });
+const snapshotTime = parseTimestampMs(data.generated);
+const freshnessWarning = !Number.isFinite(snapshotTime)
+  ? '无法识别 CodeBurn 快照时间，现金用量可能不是最新。请刷新统计。'
+  : Date.now() - snapshotTime > 60 * 60 * 1000
+    ? `CodeBurn 快照生成于 ${generated}，已超过 60 分钟；现金用量可能不是最新，请点击刷新数据。`
+    : '';
 const html = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -469,6 +475,7 @@ const html = `<!DOCTYPE html>
   body { background: #16161f; color: #e6e6ee; font-family: "Microsoft YaHei", "微软雅黑", sans-serif; padding: 24px; max-width: 1080px; margin: 0 auto; }
   h1 { font-size: 22px; margin-bottom: 4px; }
   .meta { color: #8b8b9e; font-size: 12px; margin-bottom: 20px; }
+  .data-warning { border-left: 3px solid #e1a76b; background: #302a20; color: #f0c98e; padding: 9px 12px; margin: 8px 0 14px; font-size: 13px; }
   .topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
   .refresh-btn { background: #5b8def; color: #fff; border: none; border-radius: 8px; padding: 10px 22px; font-size: 14px; cursor: pointer; font-family: inherit; }
   .refresh-btn:hover { background: #6f9cf2; }
@@ -519,6 +526,7 @@ const html = `<!DOCTYPE html>
   <div><button id="refreshBtn" class="refresh-btn" style="display:none">🔄 刷新数据</button><span id="refreshState"></span></div>
 </div>
 
+${freshnessWarning ? `<div class="data-warning" role="status">⚠ ${escapeHtml(freshnessWarning)}</div>` : ''}
 <div class="cards">${cards}</div>
 <div class="cards">${regionCards}</div>
 

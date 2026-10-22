@@ -153,4 +153,16 @@ test('builds a safe dashboard with consistent Beijing windows and WorkBuddy tota
   const chartData = JSON.parse(cdMatch[1]);
   assert.ok(chartData.cost.includes(0.29), 'daily totals include WorkBuddy credit conversion');
   assert.ok(chartData.tokens.includes(920), 'daily token chart includes deduplicated and independent calls');
+
+  usage.generated = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+  fs.writeFileSync(path.join(output, 'usage.json'), JSON.stringify(usage), 'utf8');
+  const staleRun = spawnSync(node, ['build.js'], {
+    cwd: output,
+    encoding: 'utf8',
+    env: { ...process.env, USERPROFILE: home, HOME: home },
+  });
+  assert.equal(staleRun.status, 0, staleRun.stderr || staleRun.stdout);
+  const staleHtml = fs.readFileSync(path.join(output, '看板.html'), 'utf8');
+  assert.match(staleHtml, /CodeBurn 快照生成于/);
+  assert.match(staleHtml, /超过 60 分钟/);
 });

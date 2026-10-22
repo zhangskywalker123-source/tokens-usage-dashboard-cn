@@ -36,7 +36,10 @@ Write-Host "Installing locked CodeBurn dependencies with $nodeVersion ..."
 if ($LASTEXITCODE -ne 0) { throw "npm ci failed with exit code $LASTEXITCODE" }
 
 New-Item -ItemType Directory -Path $runtimeDir -Force | Out-Null
-Copy-Item -LiteralPath $NodeExe -Destination (Join-Path $runtimeDir 'node.exe') -Force
+$runtimeNode = Join-Path $runtimeDir 'node.exe'
+if ([IO.Path]::GetFullPath($NodeExe) -ne [IO.Path]::GetFullPath($runtimeNode)) {
+    Copy-Item -LiteralPath $NodeExe -Destination $runtimeNode -Force
+}
 Copy-Item -LiteralPath (Join-Path $stageDir 'node_modules') -Destination $runtimeDir -Recurse -Force
 Copy-Item -LiteralPath (Join-Path $projectRoot 'build.js') -Destination (Join-Path $bundleDir 'build.js') -Force
 Copy-Item -LiteralPath (Join-Path $projectRoot 'chart.umd.min.js') -Destination (Join-Path $bundleDir 'chart.umd.min.js') -Force

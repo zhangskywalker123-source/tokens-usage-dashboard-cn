@@ -516,6 +516,7 @@ def collect(exe_dir, runtime_dir, log):
     fd, staged = tempfile.mkstemp(prefix='.usage-', suffix='.json', dir=exe_dir)
     os.close(fd)
     try:
+        os.unlink(staged)
         log('正在扫描本机各 AI 工具的用量数据（codex / claude / cursor 等）……')
         r = subprocess.run([node, cli, 'export', '--format', 'json', '-o', staged],
                            cwd=exe_dir, env=env,
@@ -533,6 +534,13 @@ def collect(exe_dir, runtime_dir, log):
     finally:
         if os.path.exists(staged):
             os.unlink(staged)
+
+
+def prepare_initial_snapshot(exe_dir, meipass, log, prog_cb=None):
+    """Refresh CodeBurn before the first dashboard render to avoid stale totals."""
+    runtime_dir = ensure_runtime(exe_dir, meipass, log, prog_cb=prog_cb)
+    ok, err = collect(exe_dir, runtime_dir, log)
+    return runtime_dir, ok, err
 
 
 # ---------- UI ----------
@@ -1033,7 +1041,7 @@ def main():
 
     def work():
         try:
-            runtime_dir = ensure_runtime(exe_dir, meipass, log, prog_cb=prog)
+            runtime_dir, refreshed, err = prepare_initial_snapshot(exe_dir, meipass, log, prog_cb=prog)
         except Exception as exc:
             print('ensure_runtime failed:', repr(exc))
             # 默认参数绑定 exc：except 块结束后异常变量会被删除，闭包延迟引用会 NameError
@@ -1042,6 +1050,11 @@ def main():
         app.runtime_dir = runtime_dir
         _dbglog('ensure_runtime done')
         app.after(0, app.load)
+        if not refreshed:
+            app.after(750, lambda e=err: messagebox.showwarning(
+                APP_NAME,
+                '启动时重新统计失败，当前使用本机上次保存的数据；今日花费可能不完整。\n\n' + (e or '未知错误'),
+            ))
 
     threading.Thread(target=work, daemon=True).start()
     app.mainloop()

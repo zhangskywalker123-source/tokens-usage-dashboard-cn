@@ -61,6 +61,7 @@ class AppTests(unittest.TestCase):
 
             def successful_run(args, cwd, **kwargs):
                 if str(args[1]).endswith("cli.js"):
+                    self.assertFalse(Path(args[-1]).exists(), "CodeBurn output path must not pre-exist")
                     Path(args[-1]).write_text(json.dumps({"records": []}), encoding="utf-8")
                     return SimpleNamespace(returncode=0, stdout=b"exported")
                 Path(cwd, "看板.html").write_text("fresh", encoding="utf-8")
@@ -78,6 +79,7 @@ class AppTests(unittest.TestCase):
 
             def failed_build(args, cwd, **kwargs):
                 if str(args[1]).endswith("cli.js"):
+                    self.assertFalse(Path(args[-1]).exists(), "CodeBurn output path must not pre-exist")
                     Path(args[-1]).write_text(json.dumps({"records": ["new"]}), encoding="utf-8")
                     return SimpleNamespace(returncode=0, stdout=b"")
                 return SimpleNamespace(returncode=1, stdout=b"build error")

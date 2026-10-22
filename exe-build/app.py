@@ -82,6 +82,7 @@ def collect(exe_dir, runtime_dir):
     build_dir = None
 
     try:
+        os.unlink(staged_usage)
         log("正在扫描本机各 AI 工具的用量数据（codex / claude / cursor 等）……")
         r1 = subprocess.run(
             [node, cli, "export", "--format", "json", "-o", staged_usage],
