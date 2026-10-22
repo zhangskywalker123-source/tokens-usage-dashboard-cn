@@ -1,0 +1,23 @@
+# Local usage data and generated dashboard
+usage.json
+看板.html
+
+# Packaged or extracted binaries
+*.exe
+*.exe.bak*
+_runtime/
+exe-build/bundle/runtime/
+exe-build/build/
+exe-build/dist/
+exe-build/test/
+exe-build/test2/
+
+# Local dependencies, caches, and generated previews
+node_modules/
+**/node_modules/
+**/__pycache__/
+.pytest_cache/
+preview*.png
+
+# Superseded prototype generator
+exe-build/bundlebuild.js
