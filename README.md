@@ -17,6 +17,16 @@
 - 原生窗口版支持通过 `TOKEN_DASH_DEBUG_FILE` 显式启用启动诊断日志；默认不写诊断文件。
 - 原生窗口版启动时先刷新 CodeBurn 快照；若导出数据超过 60 分钟，HTML 看板会显示过期提醒。
 
+## Agent 与模型支持范围
+
+本项目是本地用量看板，不调用、托管或执行 Agent/大模型。Agent 支持是指锁定依赖 CodeBurn 0.9.27 能从本机日志读取用量；WorkBuddy 通过本项目自己的 JSONL 解析器读取。CodeBurn 的上游适配清单可在 [CodeBurn 0.9.27 README](https://github.com/getagentseal/codeburn/blob/v0.9.27/README.md) 核对。
+
+CodeBurn 0.9.27 适配的 42 种客户端/Agent：Amp、Antigravity、Claude Code、Cline、Cline CLI、Codebuff、Codex、CodeWhale、Command Code、Copilot、Crush、Cursor、Cursor Agent、DeepSeek Harness、Devin、Droid、Forge、Gemini CLI、Goose、Grok Bot、Grok Build、Hermes Agent、IBM Bob、KiloCode、Kimi、Kimi Code、Kiro、LingTai TUI、Mistral Vibe、Mux、OMP、Open Design、OpenClaude、OpenClaw、OpenCode、Pi、Qwen、Quick Desktop、Warp、ZCode、Zed、Zerostack。另有 Vercel AI Gateway 用量导入；它是网关数据源，不计作客户端/Agent。
+
+模型名称只用于本地统计和供应商归类，不代表看板支持调用或运行相应模型。显式归类覆盖 OpenAI、Anthropic、Google、xAI、Mistral AI、Cohere、Meta、Perplexity、Amazon、Microsoft、NVIDIA、AI21 Labs、DeepSeek、Kimi/Moonshot、Qwen、智谱、豆包、腾讯、百度、MiniMax、零一万物、阶跃星辰及明确的本地运行器（Ollama、LM Studio、llama.cpp）；未识别的模型名归入「其他」。归类基于模型 ID 关键词，第三方网关自定义别名可能需要按实际模型名补充规则。
+
+**边界说明：**CodeBurn 是否能统计到具体记录，还取决于对应客户端版本、日志是否留存及上游适配器格式；本项目不承诺所有版本和配置均有日志。若某客户端没有被上游适配，或模型仍显示为「其他」，请提交脱敏后的模型 ID/日志样例以便添加并测试适配，不要上传个人用量快照或含密钥的日志。
+
 ## 开发与测试
 
 前置条件：Windows、Node.js 22、npm、Python 3.11；构建 EXE 需要 PyInstaller 6.20.0。

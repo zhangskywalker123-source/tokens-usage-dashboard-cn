@@ -52,10 +52,19 @@ FONT = 'Microsoft YaHei UI'
 
 # ---------- 供应商映射：模型名 → (供应商, 国内/国外/本地) ----------
 VENDOR_MAP = [
-    (r'ollama|qwen3|llava', ('本地模型', '本地')),
+    (r'ollama|lm[ -]?studio|llama\.cpp|local[-_/]', ('本地模型', '本地')),
     (r'gpt|o\d|codex|chatgpt', ('OpenAI', '国外')),
     (r'claude|sonnet|opus|haiku', ('Anthropic', '国外')),
     (r'gemini', ('Google', '国外')),
+    (r'grok|xai', ('xAI', '国外')),
+    (r'mistral|codestral|devstral', ('Mistral AI', '国外')),
+    (r'cohere|command[- ]?r', ('Cohere', '国外')),
+    (r'perplexity|sonar', ('Perplexity', '国外')),
+    (r'meta[-/ ]?llama|llama[- ]?[0-9]', ('Meta', '国外')),
+    (r'amazon[./ -]?(?:nova|titan)|nova[- ]?(?:micro|lite|pro)', ('Amazon', '国外')),
+    (r'microsoft[./ -]?phi|\bphi[- ]?[0-9]', ('Microsoft', '国外')),
+    (r'nvidia[./ -]?nemotron|nemotron', ('NVIDIA', '国外')),
+    (r'ai21|jamba', ('AI21 Labs', '国外')),
     (r'deepseek', ('深度求索', '国内')),
     (r'kimi|moonshot', ('月之暗面', '国内')),
     (r'qwen|tongyi', ('阿里巴巴', '国内')),
@@ -66,7 +75,6 @@ VENDOR_MAP = [
     (r'minimax|abab', ('MiniMax', '国内')),
     (r'yi-|lingyi', ('零一万物', '国内')),
     (r'step', ('阶跃星辰', '国内')),
-    (r'llama|mistral|grok|command', ('其他国外', '国外')),
 ]
 
 
@@ -770,7 +778,8 @@ class Dashboard(tk.Tk):
 
         tk.Label(self,
                  text='提示：本看板由本地 CodeBurn 数据 + WorkBuddy 本地日志生成，不上传任何信息。'
-                      '供应商识别靠模型名关键字，识别不了的归入「其他」。WorkBuddy 模型对话订阅不限量（¥0.00 正常），'
+                      'Agent 日志适配清单见项目 README；模型供应商按模型 ID 关键词分类，不代表本软件能调用模型，识别不了的归入「其他」。'
+                      'WorkBuddy 模型对话订阅不限量（¥0.00 正常），'
                       '积分只统计图片生成等按次扣费工具，按 0.05 元/分折算。',
                  bg=BG, fg='#6a6a80', font=(FONT, 9), wraplength=1100, justify='left'
                  ).pack(fill='x', padx=18, pady=(0, 10))

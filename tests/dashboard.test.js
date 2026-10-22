@@ -57,6 +57,15 @@ test('builds a safe dashboard with consistent Beijing windows and WorkBuddy tota
       providerData: { model: 'gemini-2.5' },
       message: { usage: { inputTokens: 100 } },
     },
+    ...[
+      'grok-4', 'mistral-large-latest', 'command-r-plus', 'meta-llama/llama-4',
+      'sonar-pro', 'llama-3.1-sonar-small-128k-online', 'amazon.nova-pro', 'microsoft/phi-4', 'nvidia/nemotron',
+      'qwen3-max', 'llava:latest', 'ollama/qwen3.5:9b',
+    ].map((model, index) => ({
+      timestamp: today,
+      providerData: { model },
+      message: { usage: { inputTokens: index + 1 } },
+    })),
   ];
   const credits = [
     { id: 'credit-duplicate', timestamp: today, providerData: { toolResult: { rawResponse: { credit: 5.71 } } } },
@@ -113,10 +122,15 @@ test('builds a safe dashboard with consistent Beijing windows and WorkBuddy tota
 
   const html = fs.readFileSync(path.join(output, '看板.html'), 'utf8');
   assert.match(html, /本地模型/);
+  for (const label of ['xAI', 'Mistral AI', 'Cohere', 'Meta', 'Perplexity', 'Amazon', 'Microsoft', 'NVIDIA', '阿里巴巴']) {
+    assert.ok(html.includes(label), 'vendor classification should include ' + label);
+  }
+  assert.match(html, /qwen3-max[\s\S]*?阿里巴巴/);
+  assert.match(html, /llava:latest[\s\S]*?其他/);
   assert.match(html, /3 次<\/td>/);
   assert.match(html, /¥0\.45/);
   assert.match(html, /¥71\.45/);
-  assert.match(html, /¥0\.29 \/ 920 tokens/);
+  assert.match(html, /¥0\.29 \/ 998 tokens/);
   assert.doesNotMatch(html, /old-workbuddy-model/);
   assert.match(html, /5\.71 积分/);
   assert.match(html, /3\.33 积分/);
@@ -152,7 +166,7 @@ test('builds a safe dashboard with consistent Beijing windows and WorkBuddy tota
   assert.ok(cdMatch, 'embedded chart data should remain valid JSON');
   const chartData = JSON.parse(cdMatch[1]);
   assert.ok(chartData.cost.includes(0.29), 'daily totals include WorkBuddy credit conversion');
-  assert.ok(chartData.tokens.includes(920), 'daily token chart includes deduplicated and independent calls');
+  assert.ok(chartData.tokens.includes(998), 'daily token chart includes deduplicated and independent calls');
 
   usage.generated = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
   fs.writeFileSync(path.join(output, 'usage.json'), JSON.stringify(usage), 'utf8');

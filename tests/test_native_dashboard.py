@@ -15,6 +15,25 @@ SPEC.loader.exec_module(native)
 
 
 class NativeDashboardTests(unittest.TestCase):
+    def test_model_vendor_classification_covers_major_families_without_guessing_local_execution(self):
+        cases = {
+            'grok-4': ('xAI', '国外'),
+            'mistral-large-latest': ('Mistral AI', '国外'),
+            'command-r-plus': ('Cohere', '国外'),
+            'meta-llama/llama-4': ('Meta', '国外'),
+            'sonar-pro': ('Perplexity', '国外'),
+            'llama-3.1-sonar-small-128k-online': ('Perplexity', '国外'),
+            'amazon.nova-pro': ('Amazon', '国外'),
+            'microsoft/phi-4': ('Microsoft', '国外'),
+            'nvidia/nemotron': ('NVIDIA', '国外'),
+            'qwen3-max': ('阿里巴巴', '国内'),
+            'llava:latest': ('其他', '-'),
+            'ollama/qwen3.5:9b': ('本地模型', '本地'),
+        }
+        for model, expected in cases.items():
+            with self.subTest(model=model):
+                self.assertEqual(native.vendor_of(model), expected)
+
     def test_native_startup_refreshes_codeburn_before_loading_snapshot(self):
         events = []
 

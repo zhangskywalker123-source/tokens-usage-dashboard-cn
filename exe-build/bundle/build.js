@@ -50,10 +50,19 @@ const WB_CREDIT_RATE = 0.05;
 
 // ---------- 供应商映射：模型名 → [供应商, 国内/国外] ----------
 const VENDOR_MAP = [
-  [/ollama|qwen3|llava/i, ['本地模型', '本地']],
+  [/ollama|lm[ -]?studio|llama\.cpp|local[-_/]/i, ['本地模型', '本地']],
   [/gpt|o\d|codex|chatgpt/i, ['OpenAI', '国外']],
   [/claude|sonnet|opus|haiku/i, ['Anthropic', '国外']],
   [/gemini/i, ['Google', '国外']],
+  [/grok|xai/i, ['xAI', '国外']],
+  [/mistral|codestral|devstral/i, ['Mistral AI', '国外']],
+  [/cohere|command[- ]?r/i, ['Cohere', '国外']],
+  [/perplexity|sonar/i, ['Perplexity', '国外']],
+  [/meta[-/ ]?llama|llama[- ]?[0-9]/i, ['Meta', '国外']],
+  [/amazon[./ -]?(?:nova|titan)|nova[- ]?(?:micro|lite|pro)/i, ['Amazon', '国外']],
+  [/microsoft[./ -]?phi|\bphi[- ]?[0-9]/i, ['Microsoft', '国外']],
+  [/nvidia[./ -]?nemotron|nemotron/i, ['NVIDIA', '国外']],
+  [/ai21|jamba/i, ['AI21 Labs', '国外']],
   [/deepseek/i, ['深度求索', '国内']],
   [/kimi|moonshot/i, ['月之暗面', '国内']],
   [/qwen|tongyi/i, ['阿里巴巴', '国内']],
@@ -64,7 +73,6 @@ const VENDOR_MAP = [
   [/minimax|abab/i, ['MiniMax', '国内']],
   [/yi-|lingyi/i, ['零一万物', '国内']],
   [/step/i, ['阶跃星辰', '国内']],
-  [/llama|mistral|grok|command/i, ['其他国外', '国外']],
 ];
 function vendorOf(model) {
   if (!model) return ['未知', '-'];
@@ -598,8 +606,8 @@ ${vendorBlocks}
   提示：<br>
   1. 本看板由本地 CodeBurn 数据生成，不会上传任何信息。<br>
   2. 点右上角「刷新数据」可重新统计并更新本页面。<br>
-  3. 客户端覆盖 CodeBurn 已适配的 41 种 + WorkBuddy（读本地 ~/.workbuddy 日志）；WorkBuddy 模型对话订阅制不限量（金额显示 ¥0.00 正常），积分只统计图片生成等按次扣费工具。<br>
-  4. 供应商识别靠模型名关键字（kimi、deepseek、qwen、glm、hy、ernie 等），遇到识别不了的模型会归入「其他」。
+  3. 客户端日志由 CodeBurn 0.9.27 读取：包括 Claude Code、Codex、Cursor、Gemini CLI、Copilot、Kiro、OpenCode、Qwen、Kimi Code、Goose、Cline、Antigravity、Zed 等；另支持 WorkBuddy 本地 JSONL。具体名单见项目 README。<br>
+  4. 供应商名称按模型 ID 关键词分类，不代表本软件能调用或运行该模型；未知名称归入「其他」。
 </div>
 
 <script>${chartJs}</script>
