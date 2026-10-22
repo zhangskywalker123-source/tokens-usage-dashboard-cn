@@ -5,7 +5,7 @@ a = Analysis(
     ['native_dashboard.py'],
     pathex=[],
     binaries=[],
-    datas=[('bundle/runtime.zip', 'runtime.zip')],
+    datas=[('bundle/runtime.zip', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

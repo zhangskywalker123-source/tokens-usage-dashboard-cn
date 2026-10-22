@@ -483,8 +483,12 @@ def find_dirs():
 
 
 def _runtime_zip_candidates(meipass):
-    # 打包后：datas 把 runtime.zip 放到 meipass 根目录；开发模式在 bundle/ 下
-    return [os.path.join(meipass, 'runtime.zip'), os.path.join(meipass, 'bundle', 'runtime.zip')]
+    # PyInstaller datas destinations are directories; retain the old nested layout as a fallback.
+    return [
+        os.path.join(meipass, 'runtime.zip'),
+        os.path.join(meipass, 'runtime.zip', 'runtime.zip'),
+        os.path.join(meipass, 'bundle', 'runtime.zip'),
+    ]
 
 
 def ensure_runtime(exe_dir, meipass, log, prog_cb=None):

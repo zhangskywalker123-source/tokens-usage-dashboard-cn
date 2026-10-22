@@ -66,6 +66,13 @@ try {
     Write-Host 'Building native Tokens用量统计中文看板.exe ...'
     python -m PyInstaller --noconfirm TokenDashGUI.spec
     if ($LASTEXITCODE -ne 0) { throw "Native PyInstaller build failed with exit code $LASTEXITCODE" }
+
+    $nativeExe = Join-Path $PSScriptRoot 'dist\Tokens用量统计中文看板.exe'
+    $archiveEntries = & python -m PyInstaller.utils.cliutils.archive_viewer -b -l $nativeExe 2>&1
+    if ($LASTEXITCODE -ne 0) { throw 'Could not inspect the native EXE archive.' }
+    if (-not ($archiveEntries | Where-Object { $_.Trim() -eq 'runtime.zip' })) {
+        throw 'Native EXE verification failed: runtime.zip is not at the embedded extraction root.'
+    }
 } finally {
     Pop-Location
 }

@@ -2,6 +2,7 @@ import importlib.util
 import json
 import tempfile
 import unittest
+import zipfile
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
@@ -15,6 +16,29 @@ SPEC.loader.exec_module(native)
 
 
 class NativeDashboardTests(unittest.TestCase):
+    def test_embedded_runtime_extracts_from_root_and_legacy_nested_archive_locations(self):
+        for archive_relative_path in ('runtime.zip', 'runtime.zip/runtime.zip', 'bundle/runtime.zip'):
+            with self.subTest(archive=archive_relative_path), tempfile.TemporaryDirectory() as temp:
+                root = Path(temp)
+                archive_path = root / archive_relative_path
+                archive_path.parent.mkdir(parents=True, exist_ok=True)
+                with zipfile.ZipFile(archive_path, 'w') as archive:
+                    archive.writestr('node.exe', b'node-runtime')
+                    archive.writestr('node_modules/codeburn/dist/cli.js', b'codeburn-cli')
+
+                progress = []
+                runtime_dir = native.ensure_runtime(str(root / 'app'), str(root), lambda _: None, progress.append)
+
+                self.assertEqual((Path(runtime_dir) / 'node.exe').read_bytes(), b'node-runtime')
+                self.assertEqual(
+                    (Path(runtime_dir) / 'node_modules/codeburn/dist/cli.js').read_bytes(), b'codeburn-cli'
+                )
+                self.assertEqual(progress, [1.0])
+
+    def test_native_spec_places_runtime_archive_at_meipass_root(self):
+        spec = (ROOT / 'exe-build' / 'TokenDashGUI.spec').read_text(encoding='utf-8')
+        self.assertIn("datas=[('bundle/runtime.zip', '.')],", spec)
+
     def test_model_vendor_classification_covers_major_families_without_guessing_local_execution(self):
         cases = {
             'grok-4': ('xAI', '国外'),

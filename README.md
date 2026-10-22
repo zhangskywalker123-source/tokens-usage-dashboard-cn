@@ -46,6 +46,8 @@ python -m unittest discover -s tests -p 'test_*.py' -v
 
 ## 隐私与发布
 
+构建出的 EXE 已内置 Python/Tk、Node.js 和 CodeBurn 运行时；目标电脑无需预装 Python、Node.js 或 npm。首次启动会将 Node/CodeBurn 解压到 EXE 旁的 _runtime 目录，因此请将 EXE 放在当前用户可写入的文件夹中。
+
 `usage.json`、生成的 `看板.html`、EXE、运行时依赖和预览图均被 `.gitignore` 排除。它们可能包含个人用量、模型名称、项目路径或会话信息，不应提交到公共仓库。运行看板时，统计文件保留在本机；本地 HTTP 服务只提供看板页面，并仅接受同源刷新请求。
 
 仓库不附带项目开源许可证。第三方组件的许可证信息见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)；未明确授予的项目代码复用权利仍归作者所有。

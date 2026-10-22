@@ -46,6 +46,8 @@ Build artifacts go to `exe-build/dist/` and are excluded from Git. Running `åˆ·æ
 
 ## Privacy and licensing
 
+The built executables bundle Python/Tk, Node.js, and CodeBurn; target PCs do not need Python, Node.js, or npm installed. On first launch, the native app extracts Node/CodeBurn to an _runtime folder beside the executable, so keep it in a directory writable by the current user.
+
 `usage.json`, the generated dashboard, executables, runtime dependencies, and preview images are excluded by `.gitignore`. They may reveal usage data, model names, project paths, or session information and must not be committed to a public repository. Runtime statistics remain on the local machine. The local HTTP server serves only the dashboard and accepts same-origin refresh requests.
 
 No project license is included. Third-party notices are listed in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Rights not expressly granted remain with the author.
