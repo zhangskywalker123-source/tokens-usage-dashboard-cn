@@ -12,7 +12,7 @@ This project reads local AI-client usage logs through CodeBurn and adds a parser
 - Beijing-calendar-day aggregation. Free models use token-share percentages; paid models use cost-share percentages.
 - Project, tool, client, and provider rankings sorted by their displayed metric.
 - Chart.js is embedded in the generated HTML for offline viewing.
-- The Windows single-file executable serves the dashboard from a loopback-only HTTP server.
+- Two Windows frontends are available: a browser dashboard served only on `127.0.0.1`, and an optional native Tkinter window that starts no HTTP server.
 
 ## Development and tests
 
@@ -20,10 +20,10 @@ Requirements: Windows, Node.js 22, npm, and Python 3.11. Building the executable
 
 ```powershell
 node --test tests/dashboard.test.js
-python -m unittest discover -s tests -p 'test_app.py' -v
+python -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
-Prepare the CodeBurn dependency, copy the Node runtime, and build the executable:
+Prepare CodeBurn, copy the Node runtime, and build both Windows frontends:
 
 ```powershell
 .\exe-build\build.ps1 -NodeExe "C:\Path\To\Node22\node.exe"

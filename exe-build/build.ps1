@@ -48,7 +48,9 @@ try {
     try {
         & $NodeExe --test (Join-Path $projectRoot 'tests\dashboard.test.js')
         if ($LASTEXITCODE -ne 0) { throw "Node tests failed with exit code $LASTEXITCODE" }
-        python -m unittest discover -s tests -p 'test_app.py' -v
+        python -m py_compile (Join-Path $PSScriptRoot 'native_dashboard.py')
+        if ($LASTEXITCODE -ne 0) { throw "Native dashboard syntax check failed with exit code $LASTEXITCODE" }
+        python -m unittest discover -s tests -p 'test_*.py' -v
         if ($LASTEXITCODE -ne 0) { throw "Python tests failed with exit code $LASTEXITCODE" }
     } finally {
         Pop-Location
@@ -57,6 +59,10 @@ try {
     Write-Host 'Building TokenDashCN.exe ...'
     python -m PyInstaller --noconfirm TokenDashCN.spec
     if ($LASTEXITCODE -ne 0) { throw "PyInstaller failed with exit code $LASTEXITCODE" }
+
+    Write-Host 'Building native Tokens用量统计中文看板.exe ...'
+    python -m PyInstaller --noconfirm TokenDashGUI.spec
+    if ($LASTEXITCODE -ne 0) { throw "Native PyInstaller build failed with exit code $LASTEXITCODE" }
 } finally {
     Pop-Location
 }

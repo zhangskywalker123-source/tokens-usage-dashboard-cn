@@ -12,7 +12,7 @@
 - 按北京时间自然日汇总；免费模型按 token 占比展示，付费模型按花费占比展示。
 - 项目、工具、客户端和供应商排行按指标降序排列。
 - Chart.js 内嵌 HTML，生成页可离线浏览。
-- Windows 单文件 EXE 使用仅绑定 `127.0.0.1` 的本地服务刷新看板。
+- 提供浏览器版和可选 Tkinter 原生窗口版两个 Windows 前端。浏览器版的服务仅绑定 `127.0.0.1`；原生版不启动 HTTP 服务。
 
 ## 开发与测试
 
@@ -20,10 +20,10 @@
 
 ```powershell
 node --test tests/dashboard.test.js
-python -m unittest discover -s tests -p 'test_app.py' -v
+python -m unittest discover -s tests -p 'test_*.py' -v
 ```
 
-准备 CodeBurn 依赖、复制 Node 运行时并构建 EXE：
+准备 CodeBurn 依赖、复制 Node 运行时并构建浏览器版与原生窗口版 EXE：
 
 ```powershell
 .\exe-build\build.ps1 -NodeExe "C:\Path\To\Node22\node.exe"

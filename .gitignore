@@ -7,6 +7,7 @@ usage.json
 *.exe.bak*
 _runtime/
 exe-build/bundle/runtime/
+exe-build/bundle/runtime.zip
 exe-build/build/
 exe-build/dist/
 exe-build/test/
@@ -18,6 +19,10 @@ node_modules/
 **/__pycache__/
 .pytest_cache/
 preview*.png
+*.log
+.env
+.venv/
+venv/
 
 # Superseded prototype generator
 exe-build/bundlebuild.js
