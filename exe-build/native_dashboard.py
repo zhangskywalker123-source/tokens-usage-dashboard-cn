@@ -25,6 +25,17 @@ WB_CREDIT_RATE = 0.05            # WorkBuddy 积分 0.05 元/分（官方加量�
 DAY_MS = 24 * 60 * 60 * 1000
 BJ = timezone(timedelta(hours=8))
 
+# 诊断：设置 TOKEN_DASH_DEBUG_FILE 环境变量后，把启动里程碑写入该文件
+def _dbglog(msg):
+    path = os.environ.get('TOKEN_DASH_DEBUG_FILE')
+    if not path:
+        return
+    try:
+        with open(path, 'a', encoding='utf-8') as f:
+            f.write('%.3f %s\n' % (time.time(), msg))
+    except OSError:
+        pass
+
 # ---------- 配色（深色主题） ----------
 BG = '#16161f'
 PANEL = '#1f1f2b'
@@ -807,12 +818,15 @@ class Dashboard(tk.Tk):
                 self.after(0, lambda m=msg: self._set_load(text=m))
             def prog(frac):
                 self.after(0, lambda v=frac: self._set_load(frac=v))
+            _dbglog('build_data start')
             try:
                 data = build_data(exe_dir, status_cb=say, prog_cb=prog)
             except Exception:
                 err = traceback.format_exc()
+                _dbglog('build_data FAILED')
                 self.after(0, lambda: self._load_failed(err))
                 return
+            _dbglog('build_data done')
             self.after(0, lambda: self._load_done(data))
 
         threading.Thread(target=work, daemon=True).start()
@@ -1005,8 +1019,10 @@ class Dashboard(tk.Tk):
 
 def main():
     exe_dir, meipass = find_dirs()
+    _dbglog('main start exe_dir=%s' % exe_dir)
     # 窗口立即显示 + 加载进度条，运行环境准备在后台线程进行
     app = Dashboard(exe_dir, None)
+    _dbglog('Dashboard created (window exists)')
     app.set_status('正在检查运行环境……')
 
     def log(msg):
@@ -1019,9 +1035,12 @@ def main():
         try:
             runtime_dir = ensure_runtime(exe_dir, meipass, log, prog_cb=prog)
         except Exception as exc:
-            app.after(0, lambda: messagebox.showerror(APP_NAME, '运行环境准备失败：\n%s' % exc))
+            print('ensure_runtime failed:', repr(exc))
+            # 默认参数绑定 exc：except 块结束后异常变量会被删除，闭包延迟引用会 NameError
+            app.after(0, lambda e=exc: messagebox.showerror(APP_NAME, '运行环境准备失败：\n%s' % e))
             return
         app.runtime_dir = runtime_dir
+        _dbglog('ensure_runtime done')
         app.after(0, app.load)
 
     threading.Thread(target=work, daemon=True).start()

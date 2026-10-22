@@ -13,6 +13,7 @@ This project reads local AI-client usage logs through CodeBurn and adds a parser
 - Project, tool, client, and provider rankings sorted by their displayed metric.
 - Chart.js is embedded in the generated HTML for offline viewing.
 - Two Windows frontends are available: a browser dashboard served only on `127.0.0.1`, and an optional native Tkinter window that starts no HTTP server.
+- The native window can optionally write startup diagnostics when `TOKEN_DASH_DEBUG_FILE` is set; no diagnostic file is written by default.
 
 ## Development and tests
 
