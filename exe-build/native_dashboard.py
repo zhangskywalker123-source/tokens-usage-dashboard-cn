@@ -782,7 +782,7 @@ class Dashboard(tk.Tk):
 
         tk.Label(self,
                  text='提示：本看板由本地 CodeBurn 数据 + WorkBuddy 本地日志生成，不上传任何信息。'
-                      'IDE 覆盖 VS Code / Insiders / VSCodium 的 Copilot Chat，以及 PyCharm / IntelliJ IDEA / RubyMine 的 GitHub Copilot 插件。'
+                      'IDE 覆盖 VS Code / Insiders / VSCodium 的 Copilot Chat、PyCharm / IntelliJ IDEA / RubyMine 的 GitHub Copilot 插件，以及 Windows Kimi Desktop 内嵌 Kimi Code。'
                       'JetBrains AI Assistant、Junie 当前未适配；完整 Agent 清单见项目 README。模型供应商分类不代表本软件能调用模型。'
                       'WorkBuddy 模型对话订阅不限量（¥0.00 正常），'
                       '积分只统计图片生成等按次扣费工具，按 0.05 元/分折算。',

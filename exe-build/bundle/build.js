@@ -606,7 +606,7 @@ ${vendorBlocks}
   提示：<br>
   1. 本看板由本地 CodeBurn 数据生成，不会上传任何信息。<br>
   2. 点右上角「刷新数据」可重新统计并更新本页面。<br>
-  3. IDE 覆盖包括 VS Code / Insiders / VSCodium 的 Copilot Chat，以及 PyCharm / IntelliJ IDEA / RubyMine 的 GitHub Copilot 插件；其他 Agent 名单见项目 README。<br>
+  3. IDE 覆盖包括 VS Code / Insiders / VSCodium 的 Copilot Chat、PyCharm / IntelliJ IDEA / RubyMine 的 GitHub Copilot 插件，以及 Windows Kimi Desktop 内嵌 Kimi Code；其他 Agent 名单见项目 README。<br>
   4. JetBrains AI Assistant、Junie 当前未适配；模型供应商按模型 ID 关键词分类，不代表本软件能调用模型，未知名称归入「其他」。<br>
   5. WorkBuddy 另由本地 JSONL 解析；统计取决于客户端版本及本地日志是否留存。
 </div>

@@ -33,6 +33,7 @@ Model names are used only for local usage reporting and vendor classification. T
 | --- | --- |
 | VS Code, VS Code Insiders, VSCodium | GitHub Copilot Chat sessions/transcripts; an available local OTel database is preferred for richer token counts. |
 | PyCharm, IntelliJ IDEA, RubyMine | Local chat/agent sessions from the JetBrains GitHub Copilot plugin. |
+| Kimi Desktop for Windows | Embedded Kimi Code wire sessions; the build adds the Windows default data root to CodeBurn. Regular Kimi chat sessions are a different source. |
 | JetBrains AI Assistant, Junie | No adapter in pinned CodeBurn 0.9.27; not currently supported. |
 
 This is plugin-level support, not support for every AI extension hosted by each IDE. Other VS Code tools must also have a matching CodeBurn adapter. See the upstream [Copilot source notes](https://github.com/getagentseal/codeburn/blob/v0.9.27/docs/providers/copilot.md) for data locations, fallbacks, and limitations.

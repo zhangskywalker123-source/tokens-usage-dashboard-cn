@@ -4,9 +4,24 @@ const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 const test = require('node:test');
+const { extendKimicodeHomes } = require('../exe-build/patch_codeburn_kimicode_windows');
 
 const projectRoot = path.resolve(__dirname, '..');
 const dayMs = 24 * 60 * 60 * 1000;
+
+test('adds the Windows Kimi Desktop home without removing other CodeBurn Kimi Code roots', () => {
+  for (const joinFunction of ['join26', 'join43']) {
+    const macHome = joinFunction + '(home, "Library", "Application Support", "kimi-desktop", "daimon-share", "daimon", "runtime", "kimi-code", "home")';
+    const source = 'const homes = [' + joinFunction + '(home, ".kimi-code"), ' + macHome + '];';
+    const patched = extendKimicodeHomes(source);
+
+    assert.ok(patched.includes(joinFunction + '(home, ".kimi-code")'));
+    assert.ok(patched.includes(macHome));
+    assert.ok(patched.includes('process.env.APPDATA || ' + joinFunction + '(home, "AppData", "Roaming")'));
+    assert.equal(extendKimicodeHomes(patched), patched, 'patching twice must not duplicate the data root');
+  }
+  assert.throws(() => extendKimicodeHomes('unexpected worker source'), /verified patch anchor/);
+});
 
 function beijingDate(offsetDays = 0, hour = 12) {
   const date = new Date(Date.now() + 8 * 60 * 60 * 1000 + offsetDays * dayMs);
@@ -124,6 +139,7 @@ test('builds a safe dashboard with consistent Beijing windows and WorkBuddy tota
   assert.match(html, /本地模型/);
   assert.ok(html.includes('VS Code / Insiders / VSCodium'));
   assert.ok(html.includes('PyCharm / IntelliJ IDEA / RubyMine'));
+  assert.ok(html.includes('Windows Kimi Desktop 内嵌 Kimi Code'));
   assert.ok(html.includes('JetBrains AI Assistant、Junie 当前未适配'));
   for (const label of ['xAI', 'Mistral AI', 'Cohere', 'Meta', 'Perplexity', 'Amazon', 'Microsoft', 'NVIDIA', '阿里巴巴']) {
     assert.ok(html.includes(label), 'vendor classification should include ' + label);

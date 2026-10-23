@@ -35,6 +35,9 @@ Write-Host "Installing locked CodeBurn dependencies with $nodeVersion ..."
 & $npm ci --prefix $stageDir
 if ($LASTEXITCODE -ne 0) { throw "npm ci failed with exit code $LASTEXITCODE" }
 
+& $NodeExe (Join-Path $PSScriptRoot 'patch_codeburn_kimicode_windows.js') (Join-Path (Join-Path $stageDir 'node_modules') 'codeburn')
+if ($LASTEXITCODE -ne 0) { throw 'Could not extend the pinned CodeBurn Kimi Desktop Windows source.' }
+
 New-Item -ItemType Directory -Path $runtimeDir -Force | Out-Null
 $runtimeNode = Join-Path $runtimeDir 'node.exe'
 if ([IO.Path]::GetFullPath($NodeExe) -ne [IO.Path]::GetFullPath($runtimeNode)) {
