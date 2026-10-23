@@ -122,6 +122,9 @@ test('builds a safe dashboard with consistent Beijing windows and WorkBuddy tota
 
   const html = fs.readFileSync(path.join(output, '看板.html'), 'utf8');
   assert.match(html, /本地模型/);
+  assert.ok(html.includes('VS Code / Insiders / VSCodium'));
+  assert.ok(html.includes('PyCharm / IntelliJ IDEA / RubyMine'));
+  assert.ok(html.includes('JetBrains AI Assistant、Junie 当前未适配'));
   for (const label of ['xAI', 'Mistral AI', 'Cohere', 'Meta', 'Perplexity', 'Amazon', 'Microsoft', 'NVIDIA', '阿里巴巴']) {
     assert.ok(html.includes(label), 'vendor classification should include ' + label);
   }

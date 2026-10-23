@@ -606,8 +606,9 @@ ${vendorBlocks}
   提示：<br>
   1. 本看板由本地 CodeBurn 数据生成，不会上传任何信息。<br>
   2. 点右上角「刷新数据」可重新统计并更新本页面。<br>
-  3. 客户端日志由 CodeBurn 0.9.27 读取：包括 Claude Code、Codex、Cursor、Gemini CLI、Copilot、Kiro、OpenCode、Qwen、Kimi Code、Goose、Cline、Antigravity、Zed 等；另支持 WorkBuddy 本地 JSONL。具体名单见项目 README。<br>
-  4. 供应商名称按模型 ID 关键词分类，不代表本软件能调用或运行该模型；未知名称归入「其他」。
+  3. IDE 覆盖包括 VS Code / Insiders / VSCodium 的 Copilot Chat，以及 PyCharm / IntelliJ IDEA / RubyMine 的 GitHub Copilot 插件；其他 Agent 名单见项目 README。<br>
+  4. JetBrains AI Assistant、Junie 当前未适配；模型供应商按模型 ID 关键词分类，不代表本软件能调用模型，未知名称归入「其他」。<br>
+  5. WorkBuddy 另由本地 JSONL 解析；统计取决于客户端版本及本地日志是否留存。
 </div>
 
 <script>${chartJs}</script>

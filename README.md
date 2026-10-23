@@ -27,6 +27,16 @@ CodeBurn 0.9.27 适配的 42 种客户端/Agent：Amp、Antigravity、Claude Cod
 
 **边界说明：**CodeBurn 是否能统计到具体记录，还取决于对应客户端版本、日志是否留存及上游适配器格式；本项目不承诺所有版本和配置均有日志。若某客户端没有被上游适配，或模型仍显示为「其他」，请提交脱敏后的模型 ID/日志样例以便添加并测试适配，不要上传个人用量快照或含密钥的日志。
 
+### IDE 宿主与插件边界
+
+| IDE 宿主 | 当前可读取的数据源 |
+| --- | --- |
+| VS Code、VS Code Insiders、VSCodium | GitHub Copilot Chat 本地会话/转录；有 OTel 本地库时优先读取更完整的 token 记录。 |
+| PyCharm、IntelliJ IDEA、RubyMine | JetBrains 版 GitHub Copilot 插件的本地 Chat/Agent 会话。 |
+| JetBrains AI Assistant、Junie | CodeBurn 0.9.27 没有对应适配器，当前不支持。 |
+
+以上是插件级支持，不代表对应 IDE 中所有 AI 插件均可统计。VS Code 中其他工具还需属于上面的 CodeBurn 适配名单。CodeBurn 的 [Copilot 数据源细节](https://github.com/getagentseal/codeburn/blob/v0.9.27/docs/providers/copilot.md) 说明了 VS Code 与 JetBrains 的日志位置、降级口径和限制。
+
 ## 开发与测试
 
 前置条件：Windows、Node.js 22、npm、Python 3.11；构建 EXE 需要 PyInstaller 6.20.0。

@@ -27,6 +27,16 @@ Model names are used only for local usage reporting and vendor classification. T
 
 **Coverage limits:** Whether a record appears depends on the client version, retained local logs, and the upstream adapter format. Support is not guaranteed for every version or configuration. For an unsupported client or a model shown as Other, submit a redacted model ID/log sample so an adapter can be added and tested. Do not upload personal usage snapshots or logs containing credentials.
 
+### IDE and plugin coverage
+
+| IDE host | Local source currently read |
+| --- | --- |
+| VS Code, VS Code Insiders, VSCodium | GitHub Copilot Chat sessions/transcripts; an available local OTel database is preferred for richer token counts. |
+| PyCharm, IntelliJ IDEA, RubyMine | Local chat/agent sessions from the JetBrains GitHub Copilot plugin. |
+| JetBrains AI Assistant, Junie | No adapter in pinned CodeBurn 0.9.27; not currently supported. |
+
+This is plugin-level support, not support for every AI extension hosted by each IDE. Other VS Code tools must also have a matching CodeBurn adapter. See the upstream [Copilot source notes](https://github.com/getagentseal/codeburn/blob/v0.9.27/docs/providers/copilot.md) for data locations, fallbacks, and limitations.
+
 ## Development and tests
 
 Requirements: Windows, Node.js 22, npm, and Python 3.11. Building the executable uses PyInstaller 6.20.0.
