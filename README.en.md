@@ -32,6 +32,7 @@ Model names are used only for local usage reporting and vendor classification. T
 | IDE host | Local source currently read |
 | --- | --- |
 | VS Code, VS Code Insiders, VSCodium | GitHub Copilot Chat sessions/transcripts; an available local OTel database is preferred for richer token counts. |
+| VS Code extensions | Cline and Kilo Code have dedicated CodeBurn adapters; Continue and Roo Code do not currently have adapters. |
 | PyCharm, IntelliJ IDEA, RubyMine | Local chat/agent sessions from the JetBrains GitHub Copilot plugin. |
 | Kimi Desktop for Windows | Embedded Kimi Code wire sessions; the build adds the Windows default data root to CodeBurn. Regular Kimi chat sessions are a different source. |
 | JetBrains AI Assistant, Junie | No adapter in pinned CodeBurn 0.9.27; not currently supported. |

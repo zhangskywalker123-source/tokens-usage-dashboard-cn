@@ -32,6 +32,7 @@ CodeBurn 0.9.27 适配的 42 种客户端/Agent：Amp、Antigravity、Claude Cod
 | IDE 宿主 | 当前可读取的数据源 |
 | --- | --- |
 | VS Code、VS Code Insiders、VSCodium | GitHub Copilot Chat 本地会话/转录；有 OTel 本地库时优先读取更完整的 token 记录。 |
+| VS Code 扩展 | Cline、Kilo Code 有独立 CodeBurn 适配器；Continue、Roo Code 当前没有对应适配。 |
 | PyCharm、IntelliJ IDEA、RubyMine | JetBrains 版 GitHub Copilot 插件的本地 Chat/Agent 会话。 |
 | Kimi 桌面版（Windows） | 内嵌 Kimi Code 的本地 wire 会话；打包时为 CodeBurn 补上 Windows 默认数据目录。普通 Kimi 聊天会话不是此数据源。 |
 | JetBrains AI Assistant、Junie | CodeBurn 0.9.27 没有对应适配器，当前不支持。 |

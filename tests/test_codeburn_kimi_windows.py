@@ -92,6 +92,59 @@ class WindowsKimiDesktopCodeBurnTests(unittest.TestCase):
             self.assertEqual(calls[0]["inputTokens"], 123)
             self.assertEqual(calls[0]["outputTokens"], 45)
 
+    def test_vscode_copilot_chat_session_is_exported_from_windows_appdata_root(self):
+        if not NODE.is_file() or not CODEBURN.is_file():
+            self.skipTest("Bundled CodeBurn runtime is prepared by exe-build/build.ps1")
+
+        with tempfile.TemporaryDirectory(prefix="token-dashboard-vscode-test-") as temp:
+            root = Path(temp)
+            home = root / "home"
+            appdata = home / "AppData" / "Roaming"
+            local_appdata = root / "local"
+            chat_dir = appdata / "Code" / "User" / "workspaceStorage" / "workspace-fixture" / "chatSessions"
+            chat_dir.mkdir(parents=True)
+            chat_file = chat_dir / "session-fixture.jsonl"
+            entries = [
+                {"kind": 0, "v": {"version": 3, "creationDate": 1792490400000, "sessionId": "session-fixture", "requests": []}},
+                {"kind": 2, "k": ["requests"], "v": [{
+                    "requestId": "request-fixture",
+                    "modelId": "copilot/claude-sonnet-4.6",
+                    "completionTokens": 45,
+                    "result": {"metadata": {"promptTokens": 123, "outputTokens": 45, "resolvedModel": "claude-sonnet-4-6"}},
+                }]},
+            ]
+            newline = chr(10)
+            chat_file.write_text(newline.join(json.dumps(entry) for entry in entries) + newline, encoding="utf-8")
+
+            output = root / "usage.json"
+            env = os.environ.copy()
+            env.update({
+                "USERPROFILE": str(home),
+                "HOME": str(home),
+                "APPDATA": str(appdata),
+                "LOCALAPPDATA": str(local_appdata),
+            })
+            for key in list(env):
+                if key.startswith("CODEBURN_") or key in {"KIMI_CODE_HOME", "KIMI_SHARE_DIR"}:
+                    env.pop(key, None)
+
+            result = subprocess.run(
+                [str(NODE), str(CODEBURN), "export", "--format", "json", "-o", str(output)],
+                cwd=root,
+                env=env,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=90,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+            exported = json.loads(output.read_text(encoding="utf-8"))
+            calls = [row for row in exported.get("records", []) if row.get("provider") == "copilot"]
+            self.assertEqual(len(calls), 1, "no Copilot record exported from the synthetic Windows workspaceStorage")
+            self.assertEqual(calls[0]["inputTokens"], 123)
+            self.assertEqual(calls[0]["outputTokens"], 45)
+
 
 if __name__ == "__main__":
     unittest.main()
